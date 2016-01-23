@@ -22,6 +22,8 @@ Still early experimental stage ! Not running yet !
 
 ##Using:
 
+
+
 ```
   npm run watch
 ```
@@ -29,11 +31,16 @@ Still early experimental stage ! Not running yet !
 
 ##Coding:
 
+Very verbose example : 
+
+
+### Define a part (a super duper, tube cap !)
+
 ```js
 
 import {of, head, flatten} from 'ramda'
-import {makeParams} from '../utils'
-import {makeWraps} from '../wrappers'
+import {makeParams} from 'funky-jscad/utils'
+import {makeWraps} from 'funky-jscad/wrappers'
 
 export default function tubeCap(options){
   const {
@@ -42,6 +49,7 @@ export default function tubeCap(options){
     hull, chain_hull, union, difference, 
     translate, rotate, mirror} = makeWraps()//hack for now, this NEEDS to be done in the context of this function , otherwise the origin "sphere, cylinder etc are not defined"
 
+  //defaults are either static parameters or show any parameters passed in via options
   const DEFAULTS = {
       length:12
     , wallsThickness:3
@@ -49,12 +57,12 @@ export default function tubeCap(options){
 
     , tubeDia:16
     , tubeClearance:0.1
-
   }
   
+  //this is how you defined computed paramters vs 
   function addComputedParams(options){
     let computed   = {
-        tubeOd:options.tubeDia + options.wallsThickness *2
+        tubeOd:options.tubeDia + options.wallsThickness * 2
      }
     return computed
   }
@@ -74,16 +82,36 @@ export default function tubeCap(options){
   //////////////////
   //parts
   const capHole    = cylinder({d:tubeDia+tubeClearance, h:length, fn:64})
-    .map(translate([0,0,endThickness]))
+    .map(translate([0,0,endThickness])) //you can map, reduce etc, all basic and complex shapes
 
   const capTube   = cylinder({d:tubeOd, h:length, fn:64})
     
   const result = union( capTube )
-    .map(r=>difference(r,capHole))
+    .map(r=>difference(r, capHole))//using es6 "fat arrow" syntax
 
   return flatten( result )  
 }
 
+```
+
+### And then use it (in your main file in this case)
+
+```js
+import tubeCap                  from './tubeCap'
+
+
+function main() {
+  let res = 50
+
+  let tubeCap1 = tubeCap({tubeDia:12, length:24})
+
+  return tubeCap1
+}
+
+//special hack for now
+if(typeof module !== 'undefined'){
+  module.exports = main
+}
 ```
 
 
