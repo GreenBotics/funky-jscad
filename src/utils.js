@@ -5,8 +5,7 @@ export function applyDefaults(options, DEFAULTS){
 }
 
 export function addComputedParams(options){
-  let bodyLength = options.l - options.headLength
-  let computed = {bodyLength}
+  const computed = {}
   options = Object.assign({}, options, computed)
   return options
 }
